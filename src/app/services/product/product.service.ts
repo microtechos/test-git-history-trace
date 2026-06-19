@@ -79,6 +79,17 @@ export class ProductService {
     return [...this.products()].sort((a, b) => b.rating - a.rating);
   }
 
+  getTopRated(limit = 3): Product[] {
+    return [...this.products()]
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, limit);
+  }
+
+  getPriceRange(): { min: number; max: number } {
+    const prices = this.products().map(p => p.price);
+    return { min: Math.min(...prices), max: Math.max(...prices) };
+  }
+
   applyDiscount(id: number, percentOff: number): void {
     const discount = Math.max(0, Math.min(100, percentOff));
     this.products.update(products =>
