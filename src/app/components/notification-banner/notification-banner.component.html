@@ -1,0 +1,32 @@
+<div class="notification-banner">
+  @if (notifications().length > 0) {
+    <div class="notification-header">
+      <span>Notifications ({{ unreadCount() }} unread)</span>
+      <button (click)="onClearAll()">Clear All</button>
+    </div>
+
+    <div class="notification-list">
+      @for (notification of notifications(); track notification.id) {
+        <div
+          class="notification-item"
+          [class]="'type-' + notification.type"
+          [class.unread]="!notification.read"
+        >
+          <span class="icon">{{ getIconForType(notification.type) }}</span>
+          <div class="notification-content">
+            <p class="message">{{ notification.message }}</p>
+            <span class="timestamp">{{ notification.timestamp | date:'short' }}</span>
+          </div>
+          <div class="notification-actions">
+            @if (!notification.read) {
+              <button class="btn-read" (click)="onMarkAsRead(notification.id)">Mark Read</button>
+            }
+            <button class="btn-dismiss" (click)="onDismiss(notification.id)">×</button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="empty-state">No notifications</p>
+  }
+</div>
