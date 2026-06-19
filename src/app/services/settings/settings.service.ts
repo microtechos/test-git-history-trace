@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
-import { AppSettings } from '../../models/settings.model';
+import { AppPreferences } from '../../models/preferences.model';
 
-const DEFAULT_SETTINGS: AppSettings = {
+const DEFAULT_SETTINGS: AppPreferences = {
   theme: 'light',
   language: 'en',
   itemsPerPage: 10,
@@ -13,9 +13,9 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private settings = signal<AppSettings>(this.loadFromStorage());
+  private settings = signal<AppPreferences>(this.loadFromStorage());
 
-  private settingsHistory = signal<AppSettings[]>([]);
+  private settingsHistory = signal<AppPreferences[]>([]);
 
   readonly currentSettings = this.settings.asReadonly();
   readonly theme = computed(() => this.settings().theme);
@@ -30,12 +30,12 @@ export class SettingsService {
     });
   }
 
-  updateSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]): void {
+  updateSetting<K extends keyof AppPreferences>(key: K, value: AppPreferences[K]): void {
     this.settingsHistory.update(h => [...h, { ...this.settings() }]);
     this.settings.update(s => ({ ...s, [key]: value }));
   }
 
-  updateMultiple(partial: Partial<AppSettings>): void {
+  updateMultiple(partial: Partial<AppPreferences>): void {
     this.settingsHistory.update(h => [...h, { ...this.settings() }]);
     this.settings.update(s => ({ ...s, ...partial }));
   }
@@ -68,14 +68,14 @@ export class SettingsService {
     }
   }
 
-  private loadFromStorage(): AppSettings {
+  private loadFromStorage(): AppPreferences {
     if (typeof window === 'undefined') return { ...DEFAULT_SETTINGS };
     const stored = localStorage.getItem('app-settings');
     if (!stored) return { ...DEFAULT_SETTINGS };
     return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
   }
 
-  private saveToStorage(settings: AppSettings): void {
+  private saveToStorage(settings: AppPreferences): void {
     if (typeof window === 'undefined') return;
     localStorage.setItem('app-settings', JSON.stringify(settings));
   }

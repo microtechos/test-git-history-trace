@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../services/settings/settings.service';
-import { AppSettings } from '../../models/settings.model';
+import { AppPreferences } from '../../models/preferences.model';
 
 @Component({
   selector: 'app-settings-page',
@@ -24,7 +24,7 @@ export class SettingsPageComponent {
     this.settingsService.updateSetting('theme', theme);
   }
 
-  onCurrencyChange(currency: AppSettings['currency']): void {
+  onCurrencyChange(currency: AppPreferences['currency']): void {
     this.settingsService.updateSetting('currency', currency);
   }
 
@@ -32,7 +32,7 @@ export class SettingsPageComponent {
     this.settingsService.updateSetting('language', language);
   }
 
-  onDateFormatChange(format: AppSettings['dateFormat']): void {
+  onDateFormatChange(format: AppPreferences['dateFormat']): void {
     this.settingsService.updateSetting('dateFormat', format);
   }
 

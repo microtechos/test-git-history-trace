@@ -1,4 +1,4 @@
-export interface AppSettings {
+export interface AppPreferences {
   theme: 'light' | 'dark' | 'auto';
   language: string;
   itemsPerPage: number;
