@@ -1,0 +1,27 @@
+<div class="product-card" [class.out-of-stock]="!product().inStock">
+  <div class="product-image">
+    <img [src]="product().imageUrl" [alt]="product().name" />
+    @if (!product().inStock) {
+      <span class="badge-out-of-stock">Out of Stock</span>
+    }
+  </div>
+
+  <div class="product-info">
+    <h3>{{ product().name }}</h3>
+    <p class="description">{{ product().description }}</p>
+    <p class="category">{{ product().category }}</p>
+
+    <div class="product-footer">
+      <span class="price">{{ product().price | currency }}</span>
+      <span class="rating">{{ ratingStars }}</span>
+    </div>
+
+    <button
+      class="add-to-cart-btn"
+      [disabled]="!product().inStock"
+      (click)="onAddToCart()"
+    >
+      {{ product().inStock ? 'Add to Cart' : 'Unavailable' }}
+    </button>
+  </div>
+</div>
