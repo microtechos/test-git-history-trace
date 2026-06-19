@@ -13,9 +13,22 @@ export class UserService {
   readonly allUsers = this.users.asReadonly();
   readonly activeUsers = computed(() => this.users().filter(u => u.isActive));
   readonly userCount = computed(() => this.users().length);
+  readonly adminCount = computed(() => this.users().filter(u => u.role === 'admin').length);
 
   getUserById(id: number): User | undefined {
     return this.users().find(u => u.id === id);
+  }
+
+  searchUsers(query: string): User[] {
+    const lowerQuery = query.toLowerCase();
+    return this.users().filter(u =>
+      u.name.toLowerCase().includes(lowerQuery) ||
+      u.email.toLowerCase().includes(lowerQuery)
+    );
+  }
+
+  getUsersByRole(role: User['role']): User[] {
+    return this.users().filter(u => u.role === role);
   }
 
   addUser(user: Omit<User, 'id' | 'createdAt'>): void {
@@ -25,6 +38,12 @@ export class UserService {
       createdAt: new Date(),
     };
     this.users.update(users => [...users, newUser]);
+  }
+
+  updateUser(id: number, updates: Partial<Omit<User, 'id' | 'createdAt'>>): void {
+    this.users.update(users =>
+      users.map(u => u.id === id ? { ...u, ...updates } : u)
+    );
   }
 
   removeUser(id: number): void {

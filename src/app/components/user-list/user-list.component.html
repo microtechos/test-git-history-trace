@@ -1,11 +1,27 @@
 <div class="user-list-container">
   <h2>User Management</h2>
-  <p>Total users: {{ userCount() }}</p>
+  <p>Total users: {{ userCount() }} | Admins: {{ adminCount() }}</p>
 
-  <label>
-    <input type="checkbox" [(ngModel)]="showActiveOnly" />
-    Show active users only
-  </label>
+  <div class="filters">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Search by name or email..."
+      class="search-input"
+    />
+
+    <select [(ngModel)]="selectedRole" class="role-filter">
+      <option value="all">All Roles</option>
+      <option value="admin">Admin</option>
+      <option value="editor">Editor</option>
+      <option value="viewer">Viewer</option>
+    </select>
+
+    <label>
+      <input type="checkbox" [(ngModel)]="showActiveOnly" />
+      Active only
+    </label>
+  </div>
 
   <table class="user-table">
     <thead>
