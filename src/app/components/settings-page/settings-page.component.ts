@@ -14,6 +14,11 @@ export class SettingsPageComponent {
 
   settings = this.settingsService.currentSettings;
   isDarkMode = this.settingsService.isDarkMode;
+  canUndo = this.settingsService.canUndo;
+
+  showExportDialog = false;
+  importJson = '';
+  importError = '';
 
   onThemeChange(theme: 'light' | 'dark' | 'auto'): void {
     this.settingsService.updateSetting('theme', theme);
@@ -21,6 +26,14 @@ export class SettingsPageComponent {
 
   onCurrencyChange(currency: AppSettings['currency']): void {
     this.settingsService.updateSetting('currency', currency);
+  }
+
+  onLanguageChange(language: string): void {
+    this.settingsService.updateSetting('language', language);
+  }
+
+  onDateFormatChange(format: AppSettings['dateFormat']): void {
+    this.settingsService.updateSetting('dateFormat', format);
   }
 
   onItemsPerPageChange(count: number): void {
@@ -35,7 +48,29 @@ export class SettingsPageComponent {
     this.settingsService.updateSetting('enableAnimations', !this.settings().enableAnimations);
   }
 
+  onUndo(): void {
+    this.settingsService.undo();
+  }
+
   onResetDefaults(): void {
     this.settingsService.resetToDefaults();
+  }
+
+  onExport(): void {
+    this.showExportDialog = true;
+  }
+
+  getExportedJson(): string {
+    return this.settingsService.exportSettings();
+  }
+
+  onImport(): void {
+    const success = this.settingsService.importSettings(this.importJson);
+    if (success) {
+      this.importJson = '';
+      this.importError = '';
+    } else {
+      this.importError = 'Invalid JSON format';
+    }
   }
 }
