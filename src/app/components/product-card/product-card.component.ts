@@ -11,6 +11,9 @@ import { Product } from '../../models/product.model';
 export class ProductCardComponent {
   product = input.required<Product>();
   addToCart = output<Product>();
+  toggleFavorite = output<number>();
+
+  isFavorited = false;
 
   get ratingStars(): string {
     const full = Math.floor(this.product().rating);
@@ -19,9 +22,24 @@ export class ProductCardComponent {
     return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
   }
 
+  get discountedPrice(): number | null {
+    const product = this.product();
+    if (!product.inStock) return null;
+    return product.price > 100 ? product.price * 0.9 : null;
+  }
+
+  get formattedCategory(): string {
+    return this.product().category.charAt(0).toUpperCase() + this.product().category.slice(1);
+  }
+
   onAddToCart(): void {
     if (this.product().inStock) {
       this.addToCart.emit(this.product());
     }
+  }
+
+  onToggleFavorite(): void {
+    this.isFavorited = !this.isFavorited;
+    this.toggleFavorite.emit(this.product().id);
   }
 }

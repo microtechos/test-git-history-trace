@@ -13,7 +13,14 @@ export class ProductService {
 
   readonly allProducts = this.products.asReadonly();
   readonly inStockProducts = computed(() => this.products().filter(p => p.inStock));
+  readonly outOfStockProducts = computed(() => this.products().filter(p => !p.inStock));
   readonly totalValue = computed(() => this.products().reduce((sum, p) => sum + p.price, 0));
+  readonly averageRating = computed(() => {
+    const products = this.products();
+    if (products.length === 0) return 0;
+    return products.reduce((sum, p) => sum + p.rating, 0) / products.length;
+  });
+  readonly categories = computed(() => [...new Set(this.products().map(p => p.category))]);
 
   getProductsByCategory(category: Product['category']): Product[] {
     return this.products().filter(p => p.category === category);
@@ -23,10 +30,29 @@ export class ProductService {
     return this.products().find(p => p.id === id);
   }
 
+  addProduct(product: Omit<Product, 'id'>): void {
+    const newProduct: Product = {
+      ...product,
+      id: Math.max(...this.products().map(p => p.id)) + 1,
+    };
+    this.products.update(products => [...products, newProduct]);
+  }
+
   updatePrice(id: number, newPrice: number): void {
     this.products.update(products =>
       products.map(p => p.id === id ? { ...p, price: newPrice } : p)
     );
+  }
+
+  updateRating(id: number, newRating: number): void {
+    const clampedRating = Math.max(0, Math.min(5, newRating));
+    this.products.update(products =>
+      products.map(p => p.id === id ? { ...p, rating: clampedRating } : p)
+    );
+  }
+
+  removeProduct(id: number): void {
+    this.products.update(products => products.filter(p => p.id !== id));
   }
 
   toggleStock(id: number): void {
@@ -41,5 +67,15 @@ export class ProductService {
       p.name.toLowerCase().includes(lowerQuery) ||
       p.description.toLowerCase().includes(lowerQuery)
     );
+  }
+
+  sortByPrice(ascending = true): Product[] {
+    return [...this.products()].sort((a, b) =>
+      ascending ? a.price - b.price : b.price - a.price
+    );
+  }
+
+  sortByRating(): Product[] {
+    return [...this.products()].sort((a, b) => b.rating - a.rating);
   }
 }
