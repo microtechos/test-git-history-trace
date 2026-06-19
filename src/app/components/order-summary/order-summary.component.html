@@ -1,0 +1,44 @@
+<div class="order-summary-container">
+  <h2>Order Management</h2>
+  <p>Total orders: {{ orderCount() }} | Pending: {{ pendingOrders().length }}</p>
+
+  <div class="order-list">
+    @for (order of orders(); track order.id) {
+      <div class="order-card">
+        <div class="order-header">
+          <span class="order-id">#{{ order.id }}</span>
+          <span class="status-badge" [class]="getStatusBadgeClass(order.status)">
+            {{ order.status }}
+          </span>
+        </div>
+
+        <div class="order-items">
+          @for (item of order.items; track item.productId) {
+            <div class="order-item">
+              <span>{{ item.productName }} x{{ item.quantity }}</span>
+              <span>{{ item.unitPrice | currency }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="order-footer">
+          <span class="total">Total: {{ order.totalAmount | currency }}</span>
+          <span class="date">{{ order.createdAt | date:'mediumDate' }}</span>
+        </div>
+
+        <div class="order-actions">
+          @if (order.status === 'pending') {
+            <button (click)="onUpdateStatus(order.id, 'confirmed')">Confirm</button>
+            <button (click)="onCancelOrder(order.id)" class="btn-cancel">Cancel</button>
+          }
+          @if (order.status === 'confirmed') {
+            <button (click)="onUpdateStatus(order.id, 'shipped')">Ship</button>
+          }
+          @if (order.status === 'shipped') {
+            <button (click)="onUpdateStatus(order.id, 'delivered')">Mark Delivered</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
