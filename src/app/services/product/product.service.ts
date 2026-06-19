@@ -96,4 +96,11 @@ export class ProductService {
       products.map(p => p.id === id ? { ...p, price: +(p.price * (1 - discount / 100)).toFixed(2) } : p)
     );
   }
+
+  bulkUpdateStock(ids: number[], inStock: boolean): void {
+    const idSet = new Set(ids);
+    this.products.update(products =>
+      products.map(p => idSet.has(p.id) ? { ...p, inStock } : p)
+    );
+  }
 }
