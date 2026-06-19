@@ -1,0 +1,37 @@
+<div class="user-list-container">
+  <h2>User Management</h2>
+  <p>Total users: {{ userCount() }}</p>
+
+  <label>
+    <input type="checkbox" [(ngModel)]="showActiveOnly" />
+    Show active users only
+  </label>
+
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of displayedUsers; track user.id) {
+        <tr [class.inactive]="!user.isActive">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
+          <td>
+            <button (click)="onToggleStatus(user.id)">
+              {{ user.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+            <button (click)="onRemoveUser(user.id)">Remove</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
