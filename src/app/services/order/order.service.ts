@@ -28,7 +28,14 @@ export class OrderService {
 
   readonly allOrders = this.orders.asReadonly();
   readonly pendingOrders = computed(() => this.orders().filter(o => o.status === 'pending'));
+  readonly shippedOrders = computed(() => this.orders().filter(o => o.status === 'shipped'));
+  readonly deliveredOrders = computed(() => this.orders().filter(o => o.status === 'delivered'));
   readonly orderCount = computed(() => this.orders().length);
+  readonly totalRevenue = computed(() =>
+    this.orders()
+      .filter(o => o.status !== 'cancelled')
+      .reduce((sum, o) => sum + o.totalAmount, 0)
+  );
 
   getOrderById(id: number): Order | undefined {
     return this.orders().find(o => o.id === id);
@@ -36,6 +43,36 @@ export class OrderService {
 
   getOrdersByCustomer(customerId: number): Order[] {
     return this.orders().filter(o => o.customerId === customerId);
+  }
+
+  getOrdersByStatus(status: Order['status']): Order[] {
+    return this.orders().filter(o => o.status === status);
+  }
+
+  getOrdersByDateRange(start: Date, end: Date): Order[] {
+    return this.orders().filter(o => o.createdAt >= start && o.createdAt <= end);
+  }
+
+  addItemToOrder(orderId: number, item: OrderItem): void {
+    this.orders.update(orders =>
+      orders.map(o => {
+        if (o.id !== orderId || o.status !== 'pending') return o;
+        const updatedItems = [...o.items, item];
+        const totalAmount = updatedItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
+        return { ...o, items: updatedItems, totalAmount, updatedAt: new Date() };
+      })
+    );
+  }
+
+  removeItemFromOrder(orderId: number, productId: number): void {
+    this.orders.update(orders =>
+      orders.map(o => {
+        if (o.id !== orderId || o.status !== 'pending') return o;
+        const updatedItems = o.items.filter(i => i.productId !== productId);
+        const totalAmount = updatedItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
+        return { ...o, items: updatedItems, totalAmount, updatedAt: new Date() };
+      })
+    );
   }
 
   createOrder(customerId: number, items: OrderItem[]): void {
