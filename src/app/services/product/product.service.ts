@@ -78,4 +78,11 @@ export class ProductService {
   sortByRating(): Product[] {
     return [...this.products()].sort((a, b) => b.rating - a.rating);
   }
+
+  applyDiscount(id: number, percentOff: number): void {
+    const discount = Math.max(0, Math.min(100, percentOff));
+    this.products.update(products =>
+      products.map(p => p.id === id ? { ...p, price: +(p.price * (1 - discount / 100)).toFixed(2) } : p)
+    );
+  }
 }
