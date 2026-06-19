@@ -21,6 +21,13 @@ export class ProductService {
     return products.reduce((sum, p) => sum + p.rating, 0) / products.length;
   });
   readonly categories = computed(() => [...new Set(this.products().map(p => p.category))]);
+  readonly productStats = computed(() => ({
+    total: this.products().length,
+    inStock: this.products().filter(p => p.inStock).length,
+    outOfStock: this.products().filter(p => !p.inStock).length,
+    avgPrice: +(this.products().reduce((s, p) => s + p.price, 0) / this.products().length).toFixed(2),
+    avgRating: +(this.products().reduce((s, p) => s + p.rating, 0) / this.products().length).toFixed(1),
+  }));
 
   getProductsByCategory(category: Product['category']): Product[] {
     return this.products().filter(p => p.category === category);
