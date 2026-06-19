@@ -1,0 +1,62 @@
+<div class="settings-container">
+  <h2>Settings</h2>
+
+  <div class="settings-section">
+    <h3>Appearance</h3>
+
+    <div class="setting-row">
+      <label>Theme</label>
+      <select [ngModel]="settings().theme" (ngModelChange)="onThemeChange($event)">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="auto">Auto</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>Regional</h3>
+
+    <div class="setting-row">
+      <label>Currency</label>
+      <select [ngModel]="settings().currency" (ngModelChange)="onCurrencyChange($event)">
+        <option value="USD">USD ($)</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="INR">INR</option>
+      </select>
+    </div>
+
+    <div class="setting-row">
+      <label>Items per page</label>
+      <select [ngModel]="settings().itemsPerPage" (ngModelChange)="onItemsPerPageChange($event)">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>Preferences</h3>
+
+    <div class="setting-row">
+      <label>Notifications</label>
+      <button (click)="onToggleNotifications()" [class.active]="settings().enableNotifications">
+        {{ settings().enableNotifications ? 'Enabled' : 'Disabled' }}
+      </button>
+    </div>
+
+    <div class="setting-row">
+      <label>Animations</label>
+      <button (click)="onToggleAnimations()" [class.active]="settings().enableAnimations">
+        {{ settings().enableAnimations ? 'Enabled' : 'Disabled' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-footer">
+    <button class="btn-reset" (click)="onResetDefaults()">Reset to Defaults</button>
+  </div>
+</div>
